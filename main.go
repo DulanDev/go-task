@@ -4,28 +4,59 @@ import (
 	"go-task/cmd"
 	"go-task/db"
 	"os"
+	"encoding/json"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
 
-func main() {
-    db.InitDB("./tasks.db")
+type Config struct {
+	DBFile string `json:"db_file"`
+}
 
-    var rootCmd = &cobra.Command{Use: "task-manager"}
+func loadConfig() Config {
+	file, err := os.Open("config.json")
+	if err != nil {
+		// Default config if file not found
+		return Config{DBFile: "tasks.db"}
+	}
+	defer file.Close()
+
+	var config Config
+	decoder := json.NewDecoder(file)
+	if err := decoder.Decode(&config); err != nil {
+		fmt.Println("Error decoding config file:", err)
+		return Config{DBFile: "tasks.db"}
+	}
+	return config
+}
+
+func main() {
+	config := loadConfig()
+	if config.DBFile == "" {
+		config.DBFile = "tasks.db"
+	}
+	db.InitDB(config.DBFile)
+
+	var rootCmd = &cobra.Command{Use: "task-manager"}
 
     var addCmd = &cobra.Command{
-        Use:   "add",
-        Short: "Add a new task",
-        Run: func(cobraCmd *cobra.Command, args []string) {
-            title, _ := cobraCmd.Flags().GetString("title")
-            description, _ := cobraCmd.Flags().GetString("description")
-            cmd.AddTask(title, description)
-        },
-    }
+		Use:   "add",
+		Short: "Add a new task",
+		Run: func(cobraCmd *cobra.Command, args []string) {
+			title, _ := cobraCmd.Flags().GetString("title")
+			description, _ := cobraCmd.Flags().GetString("description")
+			priority, _ := cobraCmd.Flags().GetString("priority")
+			tags, _ := cobraCmd.Flags().GetString("tags")
+			cmd.AddTask(title, description, priority, tags)
+		},
+	}
 
-    addCmd.Flags().String("title", "", "Title of the task")
-    addCmd.Flags().String("description", "", "Description of the task")
-    rootCmd.AddCommand(addCmd)
+	addCmd.Flags().String("title", "", "Title of the task")
+	addCmd.Flags().String("description", "", "Description of the task")
+	addCmd.Flags().StringP("priority", "p", "Medium", "Priority of the task (High, Medium, Low)")
+	addCmd.Flags().StringP("tags", "t", "", "Comma-separated tags (e.g., 'work,urgent')")
+	rootCmd.AddCommand(addCmd)
 
     var listCmd = &cobra.Command{
         Use:   "list",

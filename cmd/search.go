@@ -6,7 +6,7 @@ import (
 	"go-task/models"
 )
 
-// SearchTasks searches for tasks that match the given keyword and returns them.
+// searches for tasks that match the given keyword and returns them.
 func SearchTasks(keyword string) ([]models.Task, error) {
     rows, err := db.DB.Query("SELECT id, title, description FROM tasks WHERE title LIKE ? OR description LIKE ?", "%"+keyword+"%", "%"+keyword+"%")
     if err != nil {

@@ -11,12 +11,10 @@ func TestUpdateTask(t *testing.T) {
     defer db.CloseDB()
     defer db.DB.Exec("DROP TABLE IF EXISTS tasks")
 
-    // Add a task to update
-    title := "Task to Update"
-    description := "This task will be updated"
-    AddTask(title, description)
+	title := "Task to Update"
+	description := "This task will be updated"
+	AddTask(title, description, "Medium", "")
 
-    // Update the task
     var task models.Task
     err := db.DB.QueryRow("SELECT id FROM tasks WHERE title = ?", title).Scan(&task.ID)
     if err != nil {
@@ -26,7 +24,6 @@ func TestUpdateTask(t *testing.T) {
     newDescription := "This task has been updated"
     UpdateTask(task.ID, newTitle, newDescription)
 
-    // Verify the task is updated
     err = db.DB.QueryRow("SELECT title, description FROM tasks WHERE id = ?", task.ID).Scan(&task.Title, &task.Description)
     if err != nil {
         t.Fatalf("Failed to query task: %v", err)

@@ -10,18 +10,15 @@ func TestListTasks(t *testing.T) {
     defer db.CloseDB()
     defer db.DB.Exec("DROP TABLE IF EXISTS tasks")
 
-    // Add a task to list
-    title := "Task to List"
-    description := "This task will be listed"
-    AddTask(title, description)
+	title := "Task to List"
+	description := "This task will be listed"
+	AddTask(title, description, "Medium", "")
 
-    // List tasks
     tasks, err := ListTasks()
     if err != nil {
         t.Fatalf("Failed to list tasks: %v", err)
     }
 
-    // Verify the task is listed
     found := false
     for _, task := range tasks {
         if task.Title == title && task.Description == description {

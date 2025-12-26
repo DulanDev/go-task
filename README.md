@@ -1,22 +1,15 @@
-# Task Manager CLI with GoLang and SQLite 📟
+# Task Manager CLI in Go 📟
 
-The Task Manager CLI is a command-line interface (CLI) tool built with GoLang. Users can add, view, update, and delete tasks, all of which are stored in a SQLite database.
+`go-task` is a lightweight command‑line task manager written in Go and backed by SQLite. It lets you capture, organize, and track your tasks with priorities, tags, and completion status directly from your terminal.
 
-## Features
+## What you can do
 
-- Add Task: Add a new task with a title and description.
-- List Tasks: View all tasks with details.
-- Update Task: Modify existing tasks.
-- Delete Task: Remove a task from the list.
-- Mark as Done: Mark a task as completed.
-- Search Tasks: Search tasks by keyword.
-
-## Directory Structure
-
-- `cmd/`: Contains Go files for different commands (add, list, update, etc.).
-- `db/`: Manages database connection and migrations.
-- `models/`: Defines the Task model and related database operations.
-- `main.go`: The entry point of the application.
+- Add tasks with title, description, priority, and tags.
+- View tasks in a readable table, sorted by priority.
+- Update task details as your work evolves.
+- Mark tasks as completed to track progress.
+- Delete tasks you no longer need.
+- Search tasks quickly using keywords.
 
 ## Getting Started
 
@@ -46,6 +39,18 @@ The Task Manager CLI is a command-line interface (CLI) tool built with GoLang. U
    go build -o go-task
    ```
 
+### Configuration
+
+You can configure the database file path by creating a `config.json` file in the project root:
+
+```json
+{
+  "db_file": "my_tasks.db"
+}
+```
+
+If `config.json` is missing or `db_file` is not specified, it defaults to `tasks.db`.
+
 ### Run tests
 
 Run all tests:
@@ -74,41 +79,51 @@ After building the project, you can use the CLI tool by running the generated bi
 ./go-task --help
 ```
 
-### Example
+### Examples
 
 Here is an example of how to use the Task Manager CLI:
 
-1. Add a new task:
+1. **Add a new task (Simple)**:
 
 ```sh
 ./go-task add --title "Buy groceries" --description "Milk, Bread, Eggs"
 ```
 
-2. List all tasks:
+2. **Add a task with Priority and Tags**:
+
+```sh
+./go-task add --title "Fix server bug" --description "Crash on startup" --priority High --tags "work,urgent,dev"
+```
+
+_Note: Priorities can be `High` (H), `Medium` (M), or `Low` (L). Tags are comma-separated._
+
+3. **List all tasks**:
 
 ```sh
 ./go-task list
 ```
 
-3. Update a task:
+_Displays tasks in a table format, sorted by Priority (High -> Low)._
+
+4. **Update a task**:
 
 ```sh
 ./go-task update --id 1 --title "Buy groceries and fruits" --description "Milk, Bread, Eggs, Apples"
 ```
 
-4. Mark a task as completed:
+5. **Mark a task as completed**:
 
 ```sh
 ./go-task complete --id 1
 ```
 
-5. Search tasks by keyword:
+6. **Search tasks by keyword**:
 
 ```sh
 ./go-task search --keyword "groceries"
 ```
 
-6. Delete a task:
+7. **Delete a task**:
 
 ```sh
 ./go-task delete --id 1
